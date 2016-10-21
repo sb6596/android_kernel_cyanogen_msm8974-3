@@ -76,6 +76,8 @@
 #define QSEECOM_SEND_CMD_CRYPTO_TIMEOUT	2000
 #define QSEECOM_LOAD_APP_CRYPTO_TIMEOUT	2000
 
+#define U32_MAX ((u32)~0U)
+
 enum qseecom_clk_definitions {
 	CLK_DFAB = 0,
 	CLK_SFPB,
