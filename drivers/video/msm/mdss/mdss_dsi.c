@@ -27,6 +27,10 @@
 #include "mdss_dsi.h"
 #include "mdss_debug.h"
 
+#ifdef CONFIG_FB_MSM_MDSS_LCD_EFFECT
+#include "mdss_lcd_effect.h"
+#endif
+
 static int mdss_dsi_regulator_init(struct platform_device *pdev)
 {
 	struct mdss_dsi_ctrl_pdata *ctrl_pdata = NULL;
@@ -673,7 +677,7 @@ int mdss_dsi_on(struct mdss_panel_data *pdata)
 
 	ctrl_pdata = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
-#ifdef CONFIG_MACH_SHENQI_K9
+#if defined(CONFIG_MACH_SHENQI_K9) || defined(CONFIG_MACH_LENOVO_K920)
 	if (gpio_is_valid(ctrl_pdata->disp_vsp_gpio) && gpio_is_valid(ctrl_pdata->disp_vsn_gpio)) {
 		gpio_direction_output(ctrl_pdata->disp_vsp_gpio, 1);
 		udelay(100);
@@ -782,6 +786,11 @@ static int mdss_dsi_unblank(struct mdss_panel_data *pdata)
 				mdss_dsi_set_tear_on(ctrl_pdata);
 		}
 	}
+
+#ifdef CONFIG_FB_MSM_MDSS_LCD_EFFECT
+	mdss_lcd_effect_update(pdata->panel_info.lcd_effect,
+			LCDE_UPDATE_ALL);
+#endif
 
 	pr_debug("%s-:\n", __func__);
 
@@ -1488,7 +1497,7 @@ int dsi_panel_device_register(struct device_node *pan_node,
 	ctrl_pdata->disp_en_gpio = of_get_named_gpio(ctrl_pdev->dev.of_node,
 		"qcom,platform-enable-gpio", 0);
 
-#ifdef CONFIG_MACH_SHENQI_K9
+#if defined(CONFIG_MACH_SHENQI_K9) || defined(CONFIG_MACH_LENOVO_K920)
 	if (!gpio_is_valid(ctrl_pdata->disp_en_gpio)) {
 		pr_err("%s:%d, Disp_en gpio not specified\n",
 						__func__, __LINE__);

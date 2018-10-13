@@ -297,6 +297,10 @@ struct mdss_mdp_pp_tear_check {
 
 struct mdss_livedisplay_ctx;
 
+#ifdef CONFIG_FB_MSM_MDSS_LCD_EFFECT
+struct mdss_lcd_effect_ctx;
+#endif
+
 struct mdss_panel_info {
 	u32 xres;
 	u32 yres;
@@ -335,6 +339,14 @@ struct mdss_panel_info {
 	int new_fps;
 	int panel_max_fps;
 	int panel_max_vtotal;
+#ifdef CONFIG_MACH_LENOVO_K920
+	u32 xstart_pix_align;
+	u32 width_pix_align;
+	u32 ystart_pix_align;
+	u32 height_pix_align;
+	u32 min_width;
+	u32 min_height;
+#endif
 	u32 min_fps;
 	u32 max_fps;
 
@@ -356,6 +368,10 @@ struct mdss_panel_info {
 	struct edp_panel_info edp;
 
 	struct mdss_livedisplay_ctx *livedisplay;
+
+#ifdef CONFIG_FB_MSM_MDSS_LCD_EFFECT
+	struct mdss_lcd_effect_ctx *lcd_effect;
+#endif
 };
 
 struct mdss_panel_data {
