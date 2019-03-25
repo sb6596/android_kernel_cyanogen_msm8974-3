@@ -16,9 +16,7 @@
  *
  */
 
-#include <linux/atomic.h>
 #include <linux/device.h>
-#include <linux/err.h>
 #include <linux/file.h>
 #include <linux/freezer.h>
 #include <linux/fs.h>
@@ -395,15 +393,6 @@ static struct ion_handle *ion_handle_lookup(struct ion_client *client,
 	return NULL;
 }
 
-/* Must hold the client lock */
-static struct ion_handle* ion_handle_get_check_overflow(struct ion_handle *handle)
-{
-	if (atomic_read(&handle->ref.refcount) + 1 == 0)
-		return ERR_PTR(-EOVERFLOW);
-	ion_handle_get(handle);
-	return handle;
-}
-
 struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
 						int id)
 {
@@ -412,7 +401,7 @@ struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
 	mutex_lock(&client->lock);
 	handle = idr_find(&client->idr, id);
 	if (handle)
-		handle = ion_handle_get_check_overflow(handle);
+		ion_handle_get(handle);
 	mutex_unlock(&client->lock);
 
 	return handle ? handle : ERR_PTR(-EINVAL);
